@@ -7,49 +7,63 @@
     <style>
         body {
             margin: 0;
-            padding: 10px;
+            padding: 2px;
             background: linear-gradient(135deg, #1e3c72, #2a5298);
+            background-attachment: fixed;
             color: white;
             font-family: 'Arial', sans-serif;
             display: flex;
             flex-direction: column;
             align-items: center;
-            min-height: 100vh;
-            overflow-x: hidden;
+            height: 100vh;
+            overflow: hidden;
+            box-sizing: border-box;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            left: 0;
+        }
+
+        html {
+            background: linear-gradient(135deg, #1e3c72, #2a5298);
+            height: 100%;
         }
 
         .game-container {
             display: flex;
             flex-direction: column;
             align-items: center;
-            max-width: 100%;
+            width: 100%;
+            height: 100vh;
+            justify-content: space-between;
+            padding: 2px;
+            box-sizing: border-box;
         }
 
         #gameCanvas {
-            border: 3px solid #fff;
-            box-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
-            border-radius: 10px;
-            max-width: 90vw;
-            height: auto;
+            border: 2px solid #fff;
+            box-shadow: 0 0 15px rgba(255, 255, 255, 0.3);
+            border-radius: 8px;
+            flex-shrink: 0;
         }
 
-        .info-panel {
+        .top-info {
             background: rgba(255, 255, 255, 0.1);
-            padding: 15px;
-            border-radius: 15px;
+            padding: min(8px, 1vh) min(15px, 3vw);
+            border-radius: min(12px, 2vh);
             backdrop-filter: blur(10px);
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-            width: 90%;
-            max-width: 300px;
-            margin: 20px 0;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+            width: min(95%, 350px);
             text-align: center;
+            margin-bottom: min(5px, 1vh);
+            flex-shrink: 0;
         }
 
         .score-display {
-            font-size: 18px;
+            font-size: min(14px, 3.5vw);
             display: flex;
             justify-content: space-around;
-            margin-bottom: 15px;
+            margin-bottom: min(8px, 1vh);
         }
 
         .score-item {
@@ -59,39 +73,80 @@
         }
 
         .score-label {
-            font-size: 12px;
+            font-size: min(10px, 2.5vw);
             color: #ffd700;
         }
 
         .score-value {
-            font-size: 20px;
+            font-size: min(16px, 4vw);
             font-weight: bold;
+        }
+
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: min(10px, 2vw);
+        }
+
+        .next-piece-container {
+            text-align: center;
+            flex-shrink: 0;
+        }
+
+        .next-label {
+            font-size: min(12px, 3vw);
+            color: #ffd700;
+            margin-bottom: min(5px, 0.5vh);
+            font-weight: bold;
+        }
+
+        #nextCanvas {
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: min(6px, 1vh);
+            background: rgba(0, 0, 0, 0.3);
+        }
+
+        #pauseBtn {
+            background: #f39c12;
+            border: 2px solid #e67e22;
+            padding: min(8px, 1.5vh) min(16px, 3vw);
+            border-radius: min(8px, 1.5vh);
+            color: white;
+            font-size: min(12px, 3vw);
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        #pauseBtn:active {
+            background: #e67e22;
         }
 
         .controls {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            gap: 15px;
-            width: 90%;
-            max-width: 300px;
-            margin: 20px 0;
+            gap: min(8px, 1.5vw);
+            width: min(95%, 350px);
+            margin-top: min(5px, 1vh);
+            flex-shrink: 0;
         }
 
         .control-btn {
             background: rgba(255, 255, 255, 0.2);
             border: 2px solid rgba(255, 255, 255, 0.3);
             color: white;
-            padding: 15px;
-            border-radius: 15px;
-            font-size: 18px;
+            padding: min(12px, 2.5vh);
+            border-radius: min(12px, 2vh);
+            font-size: min(16px, 4vw);
             cursor: pointer;
             user-select: none;
             touch-action: manipulation;
             display: flex;
             align-items: center;
             justify-content: center;
-            min-height: 60px;
+            min-height: min(45px, 8vh);
             transition: all 0.1s;
+            font-weight: bold;
         }
 
         .control-btn:active {
@@ -103,45 +158,13 @@
             grid-column: span 2;
         }
 
-        .next-piece-container {
-            text-align: center;
-            margin: 20px 0;
-        }
-
-        .next-label {
-            font-size: 16px;
-            color: #ffd700;
-            margin-bottom: 10px;
-            font-weight: bold;
-        }
-
-        #nextCanvas {
-            border: 2px solid rgba(255, 255, 255, 0.3);
-            border-radius: 10px;
-            background: rgba(0, 0, 0, 0.3);
-        }
-        #startButton {
-            background: #f39c12;
-            border: 2px solid #e67e22;
-            padding: 10px 20px;
-            border-radius: 10px;
-            color: white;
-            font-size: 16px;
-            cursor: pointer;
-            margin: 10px 0;
-        }
-
-        .pause-btn:active {
-            background: #e67e22;
-        }
-
         .game-over {
             position: fixed;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
             background: rgba(0, 0, 0, 0.95);
-            padding: 30px;
+            padding: 20px;
             border-radius: 15px;
             text-align: center;
             display: none;
@@ -153,11 +176,11 @@
             background: #4CAF50;
             color: white;
             border: none;
-            padding: 15px 30px;
-            font-size: 18px;
-            border-radius: 10px;
+            padding: 12px 24px;
+            font-size: 16px;
+            border-radius: 8px;
             cursor: pointer;
-            margin-top: 15px;
+            margin-top: 10px;
         }
 
         .game-over button:active {
@@ -165,30 +188,51 @@
         }
 
         .keyboard-controls {
-            font-size: 12px;
-            margin-top: 10px;
-            opacity: 0.7;
-            text-align: center;
+            display: none;
         }
 
         @media (min-width: 768px) {
             body {
                 padding: 20px;
+                overflow: auto;
             }
             
             .game-container {
                 flex-direction: row;
                 gap: 30px;
                 align-items: flex-start;
+                height: auto;
+                justify-content: center;
             }
 
             #gameCanvas {
                 max-width: none;
             }
 
-            .info-panel {
+            .top-info {
                 width: 250px;
                 margin: 0;
+                padding: 15px;
+            }
+
+            .score-display {
+                flex-direction: column;
+                gap: 15px;
+                font-size: 18px;
+            }
+
+            .score-item {
+                flex-direction: row;
+                justify-content: space-between;
+            }
+
+            .score-value {
+                font-size: 20px;
+            }
+
+            .info-row {
+                flex-direction: column;
+                gap: 15px;
             }
 
             .controls {
@@ -197,31 +241,143 @@
 
             .keyboard-controls {
                 display: block;
+                font-size: 12px;
+                margin-top: 15px;
+                opacity: 0.7;
+                text-align: center;
             }
 
-            .score-display {
-                flex-direction: column;
-                gap: 15px;
+            #pauseBtn {
+                padding: 10px 20px;
+                font-size: 16px;
             }
 
-            .score-item {
-                flex-direction: row;
-                justify-content: space-between;
+            .next-label {
+                font-size: 16px;
+                margin-bottom: 10px;
             }
         }
 
-        @media (max-width: 767px) {
-            .keyboard-controls {
-                display: none;
+        @media (max-height: 700px) {
+            .score-display {
+                font-size: min(12px, 3vw);
+            }
+            
+            .score-value {
+                font-size: min(14px, 3.5vw);
+            }
+            
+            .control-btn {
+                padding: min(10px, 2vh);
+                min-height: min(40px, 7vh);
+                font-size: min(14px, 3.5vw);
+            }
+        }
+
+        @media (max-height: 600px) {
+            body {
+                padding: 1px;
+            }
+            
+            .top-info {
+                padding: min(6px, 1vh) min(12px, 2.5vw);
+            }
+            
+            .score-display {
+                margin-bottom: min(5px, 0.8vh);
+            }
+            
+            .control-btn {
+                padding: min(8px, 1.5vh);
+                min-height: min(35px, 6vh);
+                font-size: min(12px, 3vw);
+            }
+        }
+
+        @media (max-height: 500px) {
+            .score-display {
+                font-size: min(10px, 2.5vw);
+            }
+            
+            .score-value {
+                font-size: min(12px, 3vw);
+            }
+            
+            .control-btn {
+                padding: min(6px, 1vh);
+                min-height: min(30px, 5vh);
+                font-size: min(10px, 2.5vw);
+            }
+            
+            .top-info {
+                padding: min(4px, 0.8vh) min(10px, 2vw);
+                margin-bottom: min(2px, 0.5vh);
+            }
+        }
+
+        /* 横画面対応 */
+        @media (orientation: landscape) and (max-height: 500px) {
+            .game-container {
+                flex-direction: row;
+                gap: min(10px, 2vw);
+                justify-content: center;
+                align-items: center;
+                padding: min(5px, 1vh);
+            }
+            
+            .top-info {
+                width: min(200px, 30vw);
+                margin: 0;
+                order: 2;
+            }
+            
+            .controls {
+                width: min(250px, 35vw);
+                order: 3;
+                margin: 0;
+                grid-template-columns: repeat(2, 1fr);
+                grid-template-rows: repeat(3, 1fr);
+            }
+            
+            .control-btn.wide {
+                grid-column: span 1;
+            }
+            
+            #gameCanvas {
+                order: 1;
+                flex-shrink: 0;
+            }
+        }
+
+        /* 極小画面対応 */
+        @media (max-width: 320px) {
+            .score-display {
+                font-size: min(10px, 3vw);
+            }
+            
+            .score-value {
+                font-size: min(12px, 3.5vw);
+            }
+            
+            .control-btn {
+                font-size: min(12px, 3.5vw);
+                padding: min(8px, 2vh);
+            }
+            
+            .next-label {
+                font-size: min(10px, 2.8vw);
+            }
+            
+            #pauseBtn {
+                font-size: min(10px, 2.8vw);
+                padding: min(6px, 1.2vh) min(12px, 2.5vw);
             }
         }
     </style>
 </head>
 <body>
     <div class="game-container">
-        <canvas id="gameCanvas" width="300" height="600"></canvas>
-        
-        <div class="info-panel">
+        <div class="top-info">
             <div class="score-display">
                 <div class="score-item">
                     <span class="score-label">Score</span>
@@ -237,12 +393,14 @@
                 </div>
             </div>
 
-            <div class="next-piece-container">
-                <div class="next-label">Next:</div>
-                <canvas id="nextCanvas" width="120" height="120"></canvas>
+            <div class="info-row">
+                <div class="next-piece-container">
+                    <div class="next-label">Next:</div>
+                    <canvas id="nextCanvas" width="80" height="80"></canvas>
+                </div>
+                
+                <button onclick="togglePause()" id="pauseBtn">PAUSE</button>
             </div>
-            
-            <button class="pause-btn" onclick="togglePause()" id="pauseBtn">PAUSE</button>
 
             <div class="keyboard-controls">
                 <h3 style="color: #ffd700; margin-bottom: 10px;">PC Controls:</h3>
@@ -253,16 +411,18 @@
                 <div>P : Pause</div>
             </div>
         </div>
-    </div>
-
-    <!-- モバイル用コントロール -->
-    <div class="controls">
-        <div class="control-btn" id="rotateBtn">↻</div>
-        <div class="control-btn" id="hardDropBtn">⬇</div>
-        <div class="control-btn" id="softDropBtn">↓</div>
         
-        <div class="control-btn" id="leftBtn">←</div>
-        <div class="control-btn wide" id="rightBtn">→</div>
+        <canvas id="gameCanvas" width="240" height="400"></canvas>
+
+        <!-- モバイル用コントロール -->
+        <div class="controls">
+            <div class="control-btn" id="rotateBtn">↻</div>
+            <div class="control-btn" id="hardDropBtn">⬇</div>
+            <div class="control-btn" id="softDropBtn">↓</div>
+            
+            <div class="control-btn" id="leftBtn">←</div>
+            <div class="control-btn wide" id="rightBtn">→</div>
+        </div>
     </div>
 
     <div class="game-over" id="gameOver">
@@ -275,7 +435,7 @@
         // ゲーム定数
         const COLS = 10;
         const ROWS = 20;
-        const BLOCK_SIZE = 30;
+        const BLOCK_SIZE = 24; // モバイル用に縮小
         
         // キャンバス設定
         const canvas = document.getElementById('gameCanvas');
@@ -285,10 +445,59 @@
         
         // レスポンシブキャンバスサイズ調整
         function resizeCanvas() {
-            const maxWidth = Math.min(300, window.innerWidth * 0.9);
-            const scale = maxWidth / 300;
-            canvas.style.width = maxWidth + 'px';
-            canvas.style.height = (600 * scale) + 'px';
+            const viewportWidth = window.innerWidth;
+            const viewportHeight = window.innerHeight;
+            
+            if (window.innerWidth >= 768) {
+                // PC用サイズ
+                canvas.width = 300;
+                canvas.height = 600;
+                canvas.style.width = '300px';
+                canvas.style.height = '600px';
+                nextCanvas.width = 120;
+                nextCanvas.height = 120;
+            } else {
+                // モバイル用動的サイズ調整
+                let canvasWidth, canvasHeight, nextSize;
+                
+                if (viewportHeight > 700) {
+                    // 大きなスマホ
+                    canvasWidth = Math.min(240, viewportWidth * 0.7);
+                    canvasHeight = Math.min(400, viewportHeight * 0.55);
+                    nextSize = 80;
+                } else if (viewportHeight > 600) {
+                    // 中サイズスマホ
+                    canvasWidth = Math.min(220, viewportWidth * 0.65);
+                    canvasHeight = Math.min(360, viewportHeight * 0.52);
+                    nextSize = 70;
+                } else if (viewportHeight > 500) {
+                    // 小さなスマホ
+                    canvasWidth = Math.min(200, viewportWidth * 0.6);
+                    canvasHeight = Math.min(320, viewportHeight * 0.5);
+                    nextSize = 60;
+                } else {
+                    // 極小スマホまたは横画面
+                    if (viewportWidth > viewportHeight) {
+                        // 横画面
+                        canvasWidth = Math.min(280, viewportHeight * 0.8);
+                        canvasHeight = Math.min(350, viewportHeight * 0.85);
+                        nextSize = 50;
+                    } else {
+                        // 極小縦画面
+                        canvasWidth = Math.min(180, viewportWidth * 0.55);
+                        canvasHeight = Math.min(280, viewportHeight * 0.45);
+                        nextSize = 50;
+                    }
+                }
+                
+                canvas.width = canvasWidth;
+                canvas.height = canvasHeight;
+                canvas.style.width = canvasWidth + 'px';
+                canvas.style.height = canvasHeight + 'px';
+                
+                nextCanvas.width = nextSize;
+                nextCanvas.height = nextSize;
+            }
         }
         
         // テトロミノの形状定義
@@ -481,7 +690,8 @@
             if (!nextPiece.shape) return;
             
             const shape = nextPiece.shape;
-            const blockSize = 20; // 次ピース表示用のブロックサイズ
+            // 動的ブロックサイズ（Next表示用）
+            const blockSize = Math.min(nextCanvas.width / 6, nextCanvas.height / 6);
             
             // ピースを中央に配置するためのオフセット計算
             const offsetX = (nextCanvas.width - shape[0].length * blockSize) / 2;
@@ -501,19 +711,23 @@
                 }
             }
         }
+
         function draw() {
             // キャンバスをクリア
             ctx.fillStyle = '#000';
             ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            // 動的ブロックサイズ計算
+            const blockSize = Math.min(canvas.width / COLS, canvas.height / ROWS);
             
             // ボードを描画
             for (let y = 0; y < ROWS; y++) {
                 for (let x = 0; x < COLS; x++) {
                     if (board[y][x]) {
                         ctx.fillStyle = COLORS[board[y][x]];
-                        ctx.fillRect(x * BLOCK_SIZE, y * BLOCK_SIZE, BLOCK_SIZE, BLOCK_SIZE);
+                        ctx.fillRect(x * blockSize, y * blockSize, blockSize, blockSize);
                         ctx.strokeStyle = '#fff';
-                        ctx.strokeRect(x * BLOCK_SIZE, y * BLOCK_SIZE, BLOCK_SIZE, BLOCK_SIZE);
+                        ctx.strokeRect(x * blockSize, y * blockSize, blockSize, blockSize);
                     }
                 }
             }
@@ -524,11 +738,11 @@
                 for (let y = 0; y < currentPiece.shape.length; y++) {
                     for (let x = 0; x < currentPiece.shape[y].length; x++) {
                         if (currentPiece.shape[y][x]) {
-                            const drawX = (currentPiece.x + x) * BLOCK_SIZE;
-                            const drawY = (currentPiece.y + y) * BLOCK_SIZE;
-                            ctx.fillRect(drawX, drawY, BLOCK_SIZE, BLOCK_SIZE);
+                            const drawX = (currentPiece.x + x) * blockSize;
+                            const drawY = (currentPiece.y + y) * blockSize;
+                            ctx.fillRect(drawX, drawY, blockSize, blockSize);
                             ctx.strokeStyle = '#fff';
-                            ctx.strokeRect(drawX, drawY, BLOCK_SIZE, BLOCK_SIZE);
+                            ctx.strokeRect(drawX, drawY, blockSize, blockSize);
                         }
                     }
                 }
@@ -538,14 +752,14 @@
             ctx.strokeStyle = '#333';
             for (let x = 0; x <= COLS; x++) {
                 ctx.beginPath();
-                ctx.moveTo(x * BLOCK_SIZE, 0);
-                ctx.lineTo(x * BLOCK_SIZE, canvas.height);
+                ctx.moveTo(x * blockSize, 0);
+                ctx.lineTo(x * blockSize, canvas.height);
                 ctx.stroke();
             }
             for (let y = 0; y <= ROWS; y++) {
                 ctx.beginPath();
-                ctx.moveTo(0, y * BLOCK_SIZE);
-                ctx.lineTo(canvas.width, y * BLOCK_SIZE);
+                ctx.moveTo(0, y * blockSize);
+                ctx.lineTo(canvas.width, y * blockSize);
                 ctx.stroke();
             }
         }
@@ -743,7 +957,11 @@
         });
 
         // 初期化
-        window.addEventListener('resize', resizeCanvas);
+        window.addEventListener('resize', () => {
+            resizeCanvas();
+            drawNextPiece();
+        });
+        
         window.addEventListener('load', () => {
             resizeCanvas();
             nextPiece = createNextPiece();
